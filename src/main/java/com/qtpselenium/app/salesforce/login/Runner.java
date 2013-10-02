@@ -10,9 +10,5 @@ import cucumber.api.junit.Cucumber;
 @RunWith(Cucumber.class)
 @Cucumber.Options(format={"html:output"})
 public class Runner {
-	
-	
-	
-	
-	
+		
 }

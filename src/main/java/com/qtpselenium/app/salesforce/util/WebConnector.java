@@ -1,6 +1,8 @@
 package com.qtpselenium.app.salesforce.util;
 
 import java.io.FileInputStream;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -9,6 +11,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 public class WebConnector {
 	// initialize properties file
@@ -23,6 +26,7 @@ public class WebConnector {
 	WebDriver chrome=null;
 	WebDriver ie=null;
 	static WebConnector w;
+	public DesiredCapabilities chromeCaps;
 	
 	private WebConnector(){
 		
@@ -30,12 +34,12 @@ public class WebConnector {
 			try{
 				// initialize OR
 				OR = new Properties();
-				FileInputStream fs  = new FileInputStream(System.getProperty("user.dir")+"\\src\\main\\java\\com\\qtpselenium\\app\\salesforce\\config\\OR.properties");
+				FileInputStream fs  = new FileInputStream(System.getenv("Auto_Home")+"\\SalesForce-App-Project\\src\\main\\java\\com\\qtpselenium\\app\\salesforce\\config\\OR.properties");
 				OR.load(fs);
 				
 				// initialize CONFIG to corresponding env
 				CONFIG= new Properties();
-				fs  = new FileInputStream(System.getProperty("user.dir")+"\\src\\main\\java\\com\\qtpselenium\\app\\salesforce\\config\\"+OR.getProperty("testEnv")+"_config.properties");
+				fs  = new FileInputStream(System.getenv("Auto_Home")+"\\SalesForce-App-Project\\src\\main\\java\\com\\qtpselenium\\app\\salesforce\\config\\"+OR.getProperty("testEnv")+"_config.properties");
 				CONFIG.load(fs);
 				
 				//System.out.println(OR.getProperty("loginusername"));
@@ -58,13 +62,19 @@ public class WebConnector {
 	public void openBrowser(String browserType){
 		log("Opening browser "+browserType);
 		if(browserType.equals("Mozilla") && mozilla==null){
+			System.setProperty("webdriver.firefox.bin", "C:\\Program Files (x86)\\Mozilla\\firefox.exe");
 			driver = new FirefoxDriver();
 			mozilla=driver;
 		}else if(browserType.equals("Mozilla") && mozilla!=null){
 			driver=mozilla;
 		}else if(browserType.equals("Chrome") && chrome==null){
-			System.setProperty("webdriver.chrome.driver", System.getProperty("user.dir")+"//chrome//chromedriver.exe");
-			driver=new ChromeDriver();
+			 chromeCaps = DesiredCapabilities.chrome();
+			    chromeCaps.setCapability("chrome.switches", Arrays.asList("--no-default-browser-check"));
+			    HashMap<String, String> chromePreferences = new HashMap<String, String>();
+		        chromePreferences.put("profile.password_manager_enabled", "false");
+		        chromeCaps.setCapability("chrome.prefs", chromePreferences);
+				System.setProperty("webdriver.chrome.driver", "C:\\selenium-grid\\chromedriver.exe");
+				driver=new ChromeDriver(chromeCaps);
 			chrome=driver;
 		}else if(browserType.equals("Chrome") && chrome==null){
 			driver=chrome;

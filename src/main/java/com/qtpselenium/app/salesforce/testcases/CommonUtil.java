@@ -17,6 +17,7 @@ public class CommonUtil {
 	public void I_Click_On(String object){
 		selenium.log("Clicking on "+object);
 		selenium.click(object);
+		
 	}
 	
 	@And("^I enter \"([^\"]*)\" as \"([^\"]*)\"$")
